@@ -14,7 +14,6 @@ import com.hackerton.noahah.presentation.util.Constants.BRAILLE
 import com.hackerton.noahah.presentation.util.Constants.HEAR
 import dagger.hilt.android.AndroidEntryPoint
 
-@AndroidEntryPoint
 class ModeFragment: BaseFragment<FragmentModeBinding>(R.layout.fragment_mode) {
 
     private val parentViewModel: ServiceViewModel by activityViewModels()
