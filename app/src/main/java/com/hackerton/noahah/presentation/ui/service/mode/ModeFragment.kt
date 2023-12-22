@@ -21,12 +21,25 @@ class ModeFragment: BaseFragment<FragmentModeBinding>(R.layout.fragment_mode) {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        initObserverType()
+
         binding.btnToHear.setOnClickListener {
             findNavController().toHearFragment(HEAR)
         }
 
         binding.btnToBraille.setOnClickListener {
             findNavController().toHearFragment(BRAILLE)
+        }
+    }
+
+    private fun initObserverType(){
+        repeatOnStarted {
+            parentViewModel.type.collect{
+                when(it){
+                    BRAILLE -> findNavController().toHearFragment(BRAILLE)
+                    HEAR -> findNavController().toHearFragment(HEAR)
+                }
+            }
         }
     }
 
