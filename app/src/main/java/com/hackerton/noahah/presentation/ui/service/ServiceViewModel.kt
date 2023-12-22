@@ -7,7 +7,10 @@ class ServiceViewModel : ViewModel() {
 
     private var pdfMultiPart: MultipartBody.Part? = null
 
-    fun setMultiPart(part: MultipartBody.Part) {
+    fun setPdfMultiPart(part: MultipartBody.Part) {
         pdfMultiPart = part
     }
+
+    fun getPdfMultiPart() = pdfMultiPart
+
 }

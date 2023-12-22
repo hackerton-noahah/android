@@ -1,21 +1,11 @@
 package com.hackerton.noahah.presentation.ui.main
 
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.os.Build
 import android.os.Bundle
-import androidx.activity.result.contract.ActivityResultContracts
-import android.speech.RecognitionListener
-import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
-import android.util.Log
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
-import com.hackerton.noahah.Manifest
-import com.hackerton.noahah.data.model.SpeechErrorMessage
+import androidx.activity.result.contract.ActivityResultContracts
 import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivityMainBinding
 import com.hackerton.noahah.presentation.base.BaseActivity
@@ -156,7 +146,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             tts.stop()
             tts.shutdown()
         }
-        speechRecognizer.destroy()
         super.onDestroy()
     }
 }

@@ -5,6 +5,10 @@
 
     <data>
 
+        <variable
+            name="vm"
+            type="com.hackerton.noahah.presentation.ui.service.hear.HearViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout

@@ -10,7 +10,11 @@ import com.hackerton.noahah.R
 import com.hackerton.noahah.databinding.FragmentModeBinding
 import com.hackerton.noahah.presentation.base.BaseFragment
 import com.hackerton.noahah.presentation.ui.service.ServiceViewModel
+import com.hackerton.noahah.presentation.util.Constants.BRAILLE
+import com.hackerton.noahah.presentation.util.Constants.HEAR
+import dagger.hilt.android.AndroidEntryPoint
 
+@AndroidEntryPoint
 class ModeFragment: BaseFragment<FragmentModeBinding>(R.layout.fragment_mode) {
 
     private val parentViewModel: ServiceViewModel by activityViewModels()
@@ -19,12 +23,16 @@ class ModeFragment: BaseFragment<FragmentModeBinding>(R.layout.fragment_mode) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.btnToHear.setOnClickListener {
-            findNavController().toHearFragment()
+            findNavController().toHearFragment(HEAR)
+        }
+
+        binding.btnToBraille.setOnClickListener {
+            findNavController().toHearFragment(BRAILLE)
         }
     }
 
-    private fun NavController.toHearFragment(){
-        val action = ModeFragmentDirections.actionModeFragmentToHearFragment()
+    private fun NavController.toHearFragment(type: String){
+        val action = ModeFragmentDirections.actionModeFragmentToHearFragment(type)
         navigate(action)
     }
 }

@@ -14,6 +14,10 @@
 
     <fragment
         android:id="@+id/hear_fragment"
-        android:name="com.hackerton.noahah.presentation.ui.service.hear.HearFragment"/>
+        android:name="com.hackerton.noahah.presentation.ui.service.hear.HearFragment">
+        <argument
+            android:name="type"
+            app:argType="string"/>
+    </fragment>
 
 </navigation>
