@@ -56,7 +56,10 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
             viewModel.events.collect{
                 when(it){
                     is ServiceEvents.ModeButtonClicked -> {
-
+                        Handler(Looper.getMainLooper()).post {
+                            textToSpeechManager.destroy()
+                            speechRecognizer.destroy()
+                        }
                     }
                 }
             }
@@ -100,30 +103,20 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
 
     private val listener: RecognitionListener = object : RecognitionListener {
         override fun onReadyForSpeech(params: Bundle) {
-            // 말하기 시작할 준비가되면 호출
-            Toast.makeText(applicationContext, "음성인식 시작", Toast.LENGTH_SHORT).show()
         }
 
         override fun onBeginningOfSpeech() {
-            // 말하기 시작했을 때 호출
-            Toast.makeText(applicationContext, "음성인식 시작", Toast.LENGTH_SHORT).show()
 
         }
 
         override fun onRmsChanged(rmsdB: Float) {
-            // 입력받는 소리의 크기를 알려줌
-            Toast.makeText(applicationContext, "소리 크기", Toast.LENGTH_SHORT).show()
         }
 
         override fun onBufferReceived(buffer: ByteArray) {
-            // 말을 시작하고 인식이 된 단어를 buffer에 담음
-            Toast.makeText(applicationContext, "단어 담기", Toast.LENGTH_SHORT).show()
 
         }
 
         override fun onEndOfSpeech() {
-            // 말하기를 중지하면 호출
-            Toast.makeText(applicationContext, "말하기 중지", Toast.LENGTH_SHORT).show()
         }
 
         override fun onError(error: Int) {
@@ -188,7 +181,17 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
         }
     }
 
+    override fun onRestart() {
+        textToSpeechManager =
+            TextToSpeechManager(this, SpeechMessage.MODE_INIT_MENT.message, ::startObserverVoice)
+        super.onRestart()
+    }
+
     override fun onDestroy() {
+        Handler(Looper.getMainLooper()).post {
+            speechRecognizer.destroy()
+            textToSpeechManager.destroy()
+        }
         super.onDestroy()
     }
 }
