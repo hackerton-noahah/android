@@ -1,14 +1,7 @@
 package com.hackerton.noahah.presentation.ui.service.hear
 
-import android.Manifest
-import android.app.Activity
-import android.content.Intent
 import android.os.Bundle
-import android.speech.RecognizerIntent
-import android.speech.SpeechRecognizer
-import android.util.Log
 import android.view.View
-import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.navArgs
