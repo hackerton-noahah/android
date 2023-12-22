@@ -24,10 +24,12 @@ class ModeFragment: BaseFragment<FragmentModeBinding>(R.layout.fragment_mode) {
         initObserverType()
 
         binding.btnToHear.setOnClickListener {
+            parentViewModel.buttonClicked()
             findNavController().toHearFragment(HEAR)
         }
 
         binding.btnToBraille.setOnClickListener {
+            parentViewModel.buttonClicked()
             findNavController().toHearFragment(BRAILLE)
         }
     }

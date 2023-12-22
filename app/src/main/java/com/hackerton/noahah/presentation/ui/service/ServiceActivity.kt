@@ -34,6 +34,7 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
+        initEventObserve()
         textToSpeechManager =
             TextToSpeechManager(this, SpeechMessage.MODE_INIT_MENT.message, ::startObserverVoice)
 
@@ -42,6 +43,20 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
         if (intent.hasExtra("pdfId")) {
             intent.getIntExtra("pdfId", -1).let { pdfId ->
                 viewModel.setPdfId(pdfId)
+            }
+        }
+
+
+    }
+
+    private fun initEventObserve(){
+        repeatOnStarted {
+            viewModel.events.collect{
+                when(it){
+                    is ServiceEvents.ModeButtonClicked -> {
+
+                    }
+                }
             }
         }
     }

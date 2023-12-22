@@ -1,12 +1,11 @@
 package com.hackerton.noahah.presentation.ui.main
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.hackerton.noahah.data.model.BaseState
 import com.hackerton.noahah.data.model.request.GetFileUrlRequest
+import com.hackerton.noahah.data.model.request.RegisterPdfRequest
 import com.hackerton.noahah.data.repository.HearDfRepository
-import com.hackerton.noahah.presentation.util.Constants.TAG
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -18,7 +17,7 @@ import javax.inject.Inject
 
 sealed class MainEvents {
     data class GoToServiceActivity(val pdfId: Int) : MainEvents()
-    data class ShowToastMessage(val msg: String): MainEvents()
+    data class ShowToastMessage(val msg: String) : MainEvents()
 }
 
 @HiltViewModel
@@ -42,7 +41,7 @@ class MainViewModel @Inject constructor(
             ).let {
                 when (it) {
                     is BaseState.Success -> {
-                        registerPdf(it.body)
+                        registerPdf(it.body.imgUrl)
                     }
 
                     is BaseState.Error -> {
@@ -55,10 +54,12 @@ class MainViewModel @Inject constructor(
 
     private fun registerPdf(url: String) {
         viewModelScope.launch {
-            hearDfRepository.registerPdf(url).let {
+            hearDfRepository.registerPdf(
+                RegisterPdfRequest("temp", url)
+            ).let {
                 when (it) {
                     is BaseState.Success -> {
-                        _events.emit(MainEvents.GoToServiceActivity(it.body))
+                        _events.emit(MainEvents.GoToServiceActivity(it.body.id))
                     }
 
                     is BaseState.Error -> {

@@ -1,22 +1,25 @@
 package com.hackerton.noahah.data.repository
 
 import com.hackerton.noahah.data.model.BaseState
+import com.hackerton.noahah.data.model.request.ChangePdfToTextRequest
 import com.hackerton.noahah.data.model.request.GetFileUrlRequest
-import java.util.stream.BaseStream
+import com.hackerton.noahah.data.model.request.RegisterPdfRequest
+import com.hackerton.noahah.data.model.response.GetFileUrlResponse
+import com.hackerton.noahah.data.model.response.RegisterPdfResponse
 
 interface HearDfRepository {
 
 
     suspend fun getFileUrl(
         body: GetFileUrlRequest
-    ): BaseState<String>
+    ): BaseState<GetFileUrlResponse>
 
     suspend fun registerPdf(
-        body: String
-    ): BaseState<Int>
+        body: RegisterPdfRequest
+    ): BaseState<RegisterPdfResponse>
 
     suspend fun changePdfToText(
-        body: String
+        body: ChangePdfToTextRequest
     ): BaseState<Unit>
 
     suspend fun getPdfText(
