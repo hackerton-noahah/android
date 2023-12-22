@@ -16,9 +16,10 @@ import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.FragmentHearBinding
 import com.hackerton.noahah.presentation.base.BaseFragment
 import com.hackerton.noahah.presentation.ui.service.ServiceViewModel
+import com.hackerton.noahah.presentation.util.Constants.BRAILLE
+import com.hackerton.noahah.presentation.util.Constants.HEAR
 import com.hackerton.noahah.presentation.util.TextToSpeechManager
 import dagger.hilt.android.AndroidEntryPoint
-
 
 
 @AndroidEntryPoint
@@ -37,15 +38,27 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.vm = viewModel
-        if(viewModel.uiState.value.modeNum == 1) {
-            textToSpeechManager = TextToSpeechManager(requireContext(), SpeechMessage.COMPLETE_BRAILLE.message, ::startBraille)
-        } else {
-            textToSpeechManager = TextToSpeechManager(requireContext(), SpeechMessage.COMPLETE_VOICE.message, ::startVoice)
+        viewModel.setPdfId(parentViewModel.getPdfId())
 
+        when (type) {
+            BRAILLE -> {
+                textToSpeechManager = TextToSpeechManager(
+                    requireContext(),
+                    SpeechMessage.COMPLETE_BRAILLE.message,
+                    ::startBraille
+                )
+            }
+
+            HEAR -> {
+                textToSpeechManager = TextToSpeechManager(
+                    requireContext(),
+                    SpeechMessage.COMPLETE_VOICE.message,
+                    ::startVoice
+                )
+            }
         }
 
-
-        viewModel.setPdfMultiPart(parentViewModel.getPdfMultiPart())
+        viewModel.setPdfId(parentViewModel.getPdfId())
         viewModel.setDataType(type)
     }
 

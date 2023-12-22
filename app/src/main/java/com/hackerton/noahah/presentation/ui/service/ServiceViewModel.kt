@@ -4,23 +4,36 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableSharedFlow
-import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.launch
-import okhttp3.MultipartBody
 import javax.inject.Inject
+
+sealed class ServiceEvents{
+    data object ModeButtonClicked: ServiceEvents()
+}
 
 @HiltViewModel
 class ServiceViewModel @Inject constructor() : ViewModel() {
 
-    private var pdfMultiPart: MultipartBody.Part? = null
+    private val _events = MutableSharedFlow<ServiceEvents>()
+    val events: SharedFlow<ServiceEvents> = _events.asSharedFlow()
+
+    private var pdfId: Int = -1
 
     val type = MutableSharedFlow<String>()
 
-    fun setPdfMultiPart(part: MultipartBody.Part) {
-        pdfMultiPart = part
+    fun buttonClicked(){
+        viewModelScope.launch {
+            _events.emit(ServiceEvents.ModeButtonClicked)
+        }
     }
 
-    fun getPdfMultiPart() = pdfMultiPart
+    fun setPdfId(id: Int){
+        pdfId = id
+    }
+
+    fun getPdfId() = pdfId
 
     fun setType(data : String){
         viewModelScope.launch {

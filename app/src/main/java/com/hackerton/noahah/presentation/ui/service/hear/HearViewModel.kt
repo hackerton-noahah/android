@@ -1,6 +1,7 @@
 package com.hackerton.noahah.presentation.ui.service.hear
 
 import androidx.lifecycle.ViewModel
+import com.hackerton.noahah.data.repository.HearDfRepository
 import com.hackerton.noahah.presentation.util.Constants.BRAILLE
 import com.hackerton.noahah.presentation.util.Constants.HEAR
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -8,7 +9,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import okhttp3.MultipartBody
 import javax.inject.Inject
 
 
@@ -17,20 +17,21 @@ data class HearUiState(
     val showText: String = "",
     val page: Int = 0,
     val hasNext: Boolean = true,
-    val modeNum: Int = 0
 )
 
 @HiltViewModel
-class HearViewModel @Inject constructor() : ViewModel() {
+class HearViewModel @Inject constructor(
+    private val hearDfRepository: HearDfRepository
+) : ViewModel() {
 
     private val _uiState = MutableStateFlow(HearUiState())
     val uiState: StateFlow<HearUiState> = _uiState.asStateFlow()
 
-    private var pdfMultiPart: MultipartBody.Part? = null
+    private var pdfId = -1
     private var type = ""
 
-    fun setPdfMultiPart(part: MultipartBody.Part?) {
-        pdfMultiPart = part
+    fun setPdfId(id: Int) {
+        pdfId = id
     }
 
     fun setDataType(data: String) {
@@ -41,9 +42,6 @@ class HearViewModel @Inject constructor() : ViewModel() {
                     state.copy(
                         mode = " : 점자모드"
                     )
-                    state.copy(
-                        modeNum = 1
-                    )
                 }
                 getBraille()
             }
@@ -53,9 +51,6 @@ class HearViewModel @Inject constructor() : ViewModel() {
                     state.copy(
                         mode = " : 음성모드"
                     )
-                    state.copy(
-                        modeNum = 2
-                    )
                 }
                 getText()
             }
@@ -63,13 +58,12 @@ class HearViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun getText() {
-        // todo text 불러오기 api 통신
-
+        // todo text 값 불러오기
     }
 
     private fun getBraille() {
-        // todo braille 불러오기 api 통신
-
+        // todo text 값 불러오기
     }
+
 
 }
