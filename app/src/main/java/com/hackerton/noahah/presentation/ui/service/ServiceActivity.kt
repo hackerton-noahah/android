@@ -37,29 +37,39 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
         super.onCreate(savedInstanceState)
 
         initEventObserve()
-        textToSpeechManager =
-            TextToSpeechManager(this, SpeechMessage.MODE_INIT_MENT.message, ::startObserverVoice)
-
         recordSetting()
+        textToSpeechManager =
+            TextToSpeechManager(
+                this@ServiceActivity,
+                SpeechMessage.MODE_INIT_MENT.message,
+                ::startObserverVoice
+            )
 
         if (intent.hasExtra("pdfId")) {
             intent.getIntExtra("pdfId", -1).let { pdfId ->
                 viewModel.setPdfId(pdfId)
             }
         }
-
-
     }
 
-    private fun initEventObserve(){
+    private fun initEventObserve() {
         repeatOnStarted {
-            viewModel.events.collect{
-                when(it){
+            viewModel.events.collect {
+                when (it) {
                     is ServiceEvents.ModeButtonClicked -> {
                         Handler(Looper.getMainLooper()).post {
                             textToSpeechManager.destroy()
                             speechRecognizer.destroy()
                         }
+                    }
+
+                    is ServiceEvents.SpeakAnnounce -> {
+                        textToSpeechManager =
+                            TextToSpeechManager(
+                                this@ServiceActivity,
+                                SpeechMessage.MODE_AGAIN_MENT.message,
+                                ::startObserverVoice
+                            )
                     }
                 }
             }
@@ -95,7 +105,8 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
         Handler(Looper.getMainLooper()).post {
             speechRecognizer.destroy()
             // 음성 재생이 끝나면 음성 인식 시작
-            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this@ServiceActivity); // 새 SpeechRecognizer 를 만드는 팩토리 메서드
+            speechRecognizer =
+                SpeechRecognizer.createSpeechRecognizer(this@ServiceActivity); // 새 SpeechRecognizer 를 만드는 팩토리 메서드
             speechRecognizer.setRecognitionListener(listener); // 리스너 설정
             speechRecognizer.startListening(intent); // 듣기 시작
         }
@@ -106,7 +117,7 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
         }
 
         override fun onBeginningOfSpeech() {
-
+            showCustomToast("음성 인식 시작")
         }
 
         override fun onRmsChanged(rmsdB: Float) {
@@ -134,11 +145,12 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
                 SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "말씀하신 문장이 너무 깁니다.. 다시 말씀해주세요"
                 else -> "알 수 없는 오류입니다."
             }
-            when(message) {
+            when (message) {
                 "음성이 인식되지 않았습니다. 다시 말씀해주세요",
                 "잠시 후에 다시 시도해주세요.",
                 "말씀하신 문장이 너무 깁니다.. 다시 말씀해주세요" -> {
-                    textToSpeechManager = TextToSpeechManager(this@ServiceActivity, message, ::restartObserverVoice)
+                    textToSpeechManager =
+                        TextToSpeechManager(this@ServiceActivity, message, ::restartObserverVoice)
                 }
             }
         }
@@ -154,21 +166,31 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
 
             Log.d(TAG, userInput)
 
-            if(userInput.contains("음성")){
-                Handler(Looper.getMainLooper()).post {
+            if (userInput.contains("음성")) {
+
+                showLoading(this@ServiceActivity)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    dismissLoading()
                     speechRecognizer.destroy()
                     textToSpeechManager.destroy()
-                }
-                viewModel.setType(HEAR)
-            } else if(userInput.contains("점자")){
-                Handler(Looper.getMainLooper()).post {
+                    viewModel.setType(HEAR)
+                }, 2000)
+
+            } else if (userInput.contains("점자")) {
+
+                showLoading(this@ServiceActivity)
+                Handler(Looper.getMainLooper()).postDelayed({
+                    dismissLoading()
                     speechRecognizer.destroy()
                     textToSpeechManager.destroy()
-                }
-                viewModel.setType(BRAILLE)
+                    viewModel.setType(BRAILLE)
+                }, 2000)
+
             } else {
-                textToSpeechManager = TextToSpeechManager(this@ServiceActivity,
-                    SpeechErrorMessage.NOT_EXIST_MODE.message, ::restartObserverVoice)
+                textToSpeechManager = TextToSpeechManager(
+                    this@ServiceActivity,
+                    SpeechErrorMessage.NOT_EXIST_MODE.message, ::restartObserverVoice
+                )
             }
         }
 

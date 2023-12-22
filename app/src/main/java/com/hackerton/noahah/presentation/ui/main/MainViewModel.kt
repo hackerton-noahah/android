@@ -18,6 +18,8 @@ import javax.inject.Inject
 sealed class MainEvents {
     data class GoToServiceActivity(val pdfId: Int) : MainEvents()
     data class ShowToastMessage(val msg: String) : MainEvents()
+    data object ShowLoading : MainEvents()
+    data object DismissLoading : MainEvents()
 }
 
 @HiltViewModel
