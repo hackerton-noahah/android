@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/service_nav"
+    app:startDestination="@id/mode_fragment">
+
+    <fragment
+        android:id="@+id/mode_fragment"
+        android:name="com.hackerton.noahah.presentation.ui.service.mode.ModeFragment">
+        <action
+            android:id="@+id/action_mode_fragment_to_hear_fragment"
+            app:destination="@id/hear_fragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/hear_fragment"
+        android:name="com.hackerton.noahah.presentation.ui.service.hear.HearFragment"/>
+
+</navigation>
