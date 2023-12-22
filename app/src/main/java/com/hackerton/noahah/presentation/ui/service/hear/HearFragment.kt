@@ -25,7 +25,7 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
         super.onViewCreated(view, savedInstanceState)
 
         binding.vm = viewModel
-        viewModel.setPdfMultiPart(parentViewModel.getPdfMultiPart())
+        viewModel.setPdfId(parentViewModel.getPdfId())
         viewModel.setDataType(type)
     }
 

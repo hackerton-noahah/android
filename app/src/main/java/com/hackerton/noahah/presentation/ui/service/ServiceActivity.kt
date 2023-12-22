@@ -12,11 +12,9 @@ import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
-import androidx.core.net.toUri
 import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivityServiceBinding
 import com.hackerton.noahah.presentation.base.BaseActivity
-import com.hackerton.noahah.presentation.ui.toMultiPart
 import com.hackerton.noahah.presentation.util.Constants.BRAILLE
 import com.hackerton.noahah.presentation.util.Constants.HEAR
 import com.hackerton.noahah.presentation.util.Constants.TAG
@@ -24,7 +22,7 @@ import com.hackerton.noahah.presentation.util.TextToSpeechManager
 import dagger.hilt.android.AndroidEntryPoint
 
 @AndroidEntryPoint
-class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBinding::inflate) {
+class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBinding::inflate) {
 
     private val viewModel: ServiceViewModel by viewModels()
     private lateinit var textToSpeechManager: TextToSpeechManager
@@ -36,19 +34,19 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        textToSpeechManager = TextToSpeechManager(this, SpeechMessage.MODE_INIT_MENT.message, ::startObserverVoice)
+        textToSpeechManager =
+            TextToSpeechManager(this, SpeechMessage.MODE_INIT_MENT.message, ::startObserverVoice)
 
         recordSetting()
 
-        if(intent.hasExtra("pdfUri")){
-            intent.getStringExtra("pdfUri")?.let{ pdfUri ->
-                val pdfMultiPart = pdfUri.toUri().toMultiPart(this)
-                viewModel.setPdfMultiPart(pdfMultiPart)
+        if (intent.hasExtra("pdfId")) {
+            intent.getIntExtra("pdfId", -1).let { pdfId ->
+                viewModel.setPdfId(pdfId)
             }
         }
     }
 
-    private fun recordSetting(){
+    private fun recordSetting() {
         // 안드로이드 6.0버전 이상인지 체크해서 퍼미션 체크
         ActivityCompat.requestPermissions(
             this, arrayOf(
@@ -59,14 +57,15 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
 
         // RecognizerIntent 생성
         intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,getPackageName()); // 여분의 키
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR"); // 언어 설정
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE, getPackageName()); // 여분의 키
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, "ko-KR"); // 언어 설정
     }
 
-    private fun startObserverVoice(){
+    private fun startObserverVoice() {
         Handler(Looper.getMainLooper()).post {
             // 음성 재생이 끝나면 음성 인식 시작
-            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this@ServiceActivity); // 새 SpeechRecognizer 를 만드는 팩토리 메서드
+            speechRecognizer =
+                SpeechRecognizer.createSpeechRecognizer(this@ServiceActivity); // 새 SpeechRecognizer 를 만드는 팩토리 메서드
             speechRecognizer.setRecognitionListener(listener); // 리스너 설정
             speechRecognizer.startListening(intent); // 듣기 시작
         }
@@ -129,12 +128,11 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
 
             Log.d(TAG, userInput)
 
-            if(userInput.contains("음성")){
+            if (userInput.contains("음성")) {
                 viewModel.setType(HEAR)
-            } else if(userInput.contains("점자")){
+            } else if (userInput.contains("점자")) {
                 viewModel.setType(BRAILLE)
             }
-
         }
 
         override fun onPartialResults(partialResults: Bundle) {

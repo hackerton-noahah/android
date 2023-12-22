@@ -1,5 +1,6 @@
 package com.hackerton.noahah.app.di
 
+import com.hackerton.noahah.data.remote.HearDFApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -11,10 +12,10 @@ import javax.inject.Singleton
 @InstallIn(SingletonComponent::class)
 object ApiModule {
 
-//    @Singleton
-//    @Provides
-//    fun provideIntroService(retrofit: Retrofit): IntroAPI {
-//        return retrofit.create(IntroAPI::class.java)
-//    }
+    @Singleton
+    @Provides
+    fun provideHearDFApi(retrofit: Retrofit): HearDFApi {
+        return retrofit.create(HearDFApi::class.java)
+    }
 
 }
