@@ -8,20 +8,73 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"
+        android:background="@color/black">
+
+
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toTopOf="@id/btn_to_hear"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/tv_app_title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="HEARDF"
+                android:textColor="@color/white"
+                android:textSize="30sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toTopOf="@id/tv_app_slogun"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintHorizontal_chainStyle="packed"
+                app:layout_constraintStart_toEndOf="@id/iv_microphone"
+                app:layout_constraintTop_toTopOf="parent" />
+
+            <TextView
+                android:id="@+id/tv_app_slogun"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:includeFontPadding="false"
+                android:text="PDF 음성, 점자 변환기"
+                android:textColor="@color/white"
+                android:textSize="15sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toEndOf="@id/iv_microphone"
+                app:layout_constraintTop_toBottomOf="@id/tv_app_title" />
+
+            <ImageView
+                android:id="@+id/iv_microphone"
+                android:layout_width="40dp"
+                android:layout_height="70dp"
+                android:layout_marginEnd="12dp"
+                android:src="@drawable/microphone"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toStartOf="@id/tv_app_slogun"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintTop_toTopOf="parent" />
+
+        </androidx.constraintlayout.widget.ConstraintLayout>
 
         <androidx.appcompat.widget.AppCompatButton
             android:id="@+id/btn_to_hear"
             android:layout_width="0dp"
             android:layout_height="0dp"
             android:layout_marginStart="20dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/rect_orangefill_greystroke_15radius"
+            android:background="@drawable/rect_orangefill_greystroke_custom_radius"
             android:text="음성모드"
+
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintDimensionRatio="4:3"
             app:layout_constraintEnd_toStartOf="@id/btn_to_braille"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -30,13 +83,14 @@
             android:id="@+id/btn_to_braille"
             android:layout_width="0dp"
             android:layout_height="0dp"
+            android:layout_marginTop="50dp"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/rect_yellowfill_greystroke_15radius"
+            android:background="@drawable/rect_yellowfill_greystroke_customradius"
             android:text="점자모드"
             android:textSize="24sp"
             android:textStyle="bold"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintDimensionRatio="1:1"
+            app:layout_constraintDimensionRatio="4:3"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toEndOf="@id/btn_to_hear"
             app:layout_constraintTop_toTopOf="parent" />
