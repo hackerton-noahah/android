@@ -1,22 +1,25 @@
 package com.hackerton.noahah.presentation.ui.main
 
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
-import android.os.Handler
-import android.os.Looper
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.widget.Toast
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import com.hackerton.noahah.Manifest
 import com.hackerton.noahah.data.model.SpeechErrorMessage
 import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivityMainBinding
 import com.hackerton.noahah.presentation.base.BaseActivity
 import com.hackerton.noahah.presentation.ui.service.ServiceActivity
-import com.hackerton.noahah.presentation.util.Constants.TAG
 import java.util.Locale
 
 
@@ -27,6 +30,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var recognizerIntent: Intent
 
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -34,7 +39,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         tts = TextToSpeech(this, this)
 
         // STT 초기화
-        initializeSpeechRecognizer()
+//        initializeSpeechRecognizer()
 
         binding.btnUploadPdf.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -65,71 +70,86 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
     private fun speakOut(text: String) {
         if (isTTsReady) {
             tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "utteranceId_2")
-            // 음성인식 시작
-            startListening()
-        }
-    }
-
-    private fun initializeSpeechRecognizer() {
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
-        recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
-            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
-        }
-
-        speechRecognizer.setRecognitionListener(object : RecognitionListener {
-            override fun onResults(results: Bundle?) {
-                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
-                if (matches != null) {
-                    processResults(matches[0])
+            tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
+                override fun onStart(utteranceId: String?) {
                 }
-            }
 
-            override fun onReadyForSpeech(params: Bundle?) {}
-            override fun onBeginningOfSpeech() {}
-            override fun onRmsChanged(rmsdB: Float) {}
-            override fun onBufferReceived(buffer: ByteArray?) {}
-            override fun onEndOfSpeech() {}
-            override fun onError(error: Int) {
-                restartListeningService() // 에러 발생 시 다시 시작
-            }
+                override fun onDone(utteranceId: String?) {
+                    // 음성인식 시작
+//                    startListening()
+                }
 
-            override fun onPartialResults(partialResults: Bundle?) {}
-            override fun onEvent(eventType: Int, params: Bundle?) {}
-        })
-    }
-
-    private fun startListening() {
-        speechRecognizer.startListening(recognizerIntent)
-    }
-
-    private fun processResults(command: String) {
-        // 임의의 문자열 포함 여부 확인
-        Log.d(TAG,command)
-        if (command.contains("노아", ignoreCase = true)) {
-            goToNextActivity()
-        } else {
-            // 메시지 출력 후 다시 듣기
-            showMessage(SpeechErrorMessage.NOT_EXIST_FILE_NAME.message)
-            restartListeningService()
+                override fun onError(utteranceId: String?) {
+                }
+            })
         }
     }
 
-    private fun goToNextActivity() {
-        val intent = Intent(this, ServiceActivity::class.java)
-        startActivity(intent)
-        finish()
-    }
-
-    private fun showMessage(message: String) {
-        tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, "utteranceId_4")
-        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
-    }
-
-    private fun restartListeningService() {
-        speechRecognizer.stopListening()
-        speechRecognizer.startListening(recognizerIntent)
-    }
+//
+//    private fun initializeSpeechRecognizer() {
+//        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this)
+//        recognizerIntent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH).apply {
+//            putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL, RecognizerIntent.LANGUAGE_MODEL_FREE_FORM)
+//            putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault())
+//        }
+//
+//        speechRecognizer.setRecognitionListener(object : RecognitionListener {
+//            override fun onResults(results: Bundle?) {
+//                val matches = results?.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION)
+//                if (matches != null) {
+//                    // 결과 출력
+//                    val recognizedText = matches[0]
+//                    Log.d("STT Result", recognizedText) // 로그로 출력
+//                    Toast.makeText(this@MainActivity, recognizedText, Toast.LENGTH_LONG).show() // 토스트 메시지로 출력
+//                    processResults(recognizedText)
+//                }
+//            }
+//
+//            override fun onReadyForSpeech(params: Bundle?) {}
+//            override fun onBeginningOfSpeech() {}
+//            override fun onRmsChanged(rmsdB: Float) {}
+//            override fun onBufferReceived(buffer: ByteArray?) {}
+//            override fun onEndOfSpeech() {}
+//            override fun onError(error: Int) {
+//                Log.d("STT Error", "Error code: $error") // 에러 로그 출력
+//                restartListeningService() // 에러 발생 시 다시 시작
+//            }
+//
+//            override fun onPartialResults(partialResults: Bundle?) {}
+//            override fun onEvent(eventType: Int, params: Bundle?) {}
+//        })
+//    }
+//
+//    private fun startListening() {
+//        speechRecognizer.startListening(recognizerIntent)
+//    }
+//
+//    private fun processResults(command: String) {
+//        // 임의의 문자열 포함 여부 확인
+//        if (command.contains("노아", ignoreCase = true)) {
+//            goToNextActivity()
+//        } else {
+//            // 메시지 출력 후 다시 듣기
+//            showMessage(SpeechErrorMessage.NOT_EXIST_FILE_NAME.message)
+//            restartListeningService()
+//        }
+//    }
+//
+//    private fun goToNextActivity() {
+//        val intent = Intent(this, ServiceActivity::class.java)
+//        startActivity(intent)
+//        finish()
+//    }
+//
+//    private fun showMessage(message: String) {
+//        tts.speak(message, TextToSpeech.QUEUE_FLUSH, null, "utteranceId_4")
+//        Toast.makeText(this, message, Toast.LENGTH_SHORT).show()
+//    }
+//
+//    private fun restartListeningService() {
+//        speechRecognizer.stopListening()
+//        speechRecognizer.startListening(recognizerIntent)
+//    }
 
     override fun onDestroy() {
         if (::tts.isInitialized) {
