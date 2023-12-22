@@ -7,4 +7,6 @@ object Constants {
 
     const val BRAILLE = "braille"
     const val HEAR = "hear"
+
+    const val testHear = """"""
 }
