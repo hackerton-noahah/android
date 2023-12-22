@@ -3,25 +3,20 @@ package com.hackerton.noahah.presentation.ui.main
 import android.content.Intent
 import android.os.Bundle
 import androidx.activity.result.contract.ActivityResultContracts
-import android.speech.tts.TextToSpeech
 import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivityMainBinding
 import com.hackerton.noahah.presentation.base.BaseActivity
 import com.hackerton.noahah.presentation.ui.service.ServiceActivity
-import java.util.Locale
+import com.hackerton.noahah.presentation.util.TextToSpeechManager
 
 
-class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate) , TextToSpeech.OnInitListener {
-    private lateinit var tts: TextToSpeech
-    private var isTTsReady = false
+class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate) {
 
-
+    private lateinit var textToSpeechManager: TextToSpeechManager
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
-        // TTS 초기화
-        tts = TextToSpeech(this, this)
+        textToSpeechManager = TextToSpeechManager(this, SpeechMessage.MAIN_INIT_MENT.message){}
 
         binding.btnUploadPdf.setOnClickListener {
             val intent = Intent(Intent.ACTION_GET_CONTENT)
@@ -39,26 +34,8 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             }
         }
 
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            isTTsReady = true
-            tts.language = Locale.KOREAN
-
-            // TTS 준비되면 음성 출력 시작
-            speakOut(SpeechMessage.MAIN_INIT_MENT.message)
-        }
-    }
-
-    private fun speakOut(text: String) {
-        if (isTTsReady)
-            tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "utteranceId_2")
-    }
-
     override fun onDestroy() {
-        if (::tts.isInitialized) {
-            tts.stop()
-            tts.shutdown()
-        }
+        textToSpeechManager.destroy()
         super.onDestroy()
     }
 }
