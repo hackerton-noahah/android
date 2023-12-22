@@ -39,6 +39,7 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
 
         binding.vm = viewModel
         viewModel.setPdfId(parentViewModel.getPdfId())
+        viewModel.setDataType(type)
 
         when (type) {
             BRAILLE -> {
@@ -65,9 +66,9 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                 )
             }
         }
+//
+//        viewModel.setPdfId(parentViewModel.getPdfId())
 
-        viewModel.setPdfId(parentViewModel.getPdfId())
-        viewModel.setDataType(type)
     }
 
     private fun startBraille() {

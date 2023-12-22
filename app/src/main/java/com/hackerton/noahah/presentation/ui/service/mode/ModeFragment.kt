@@ -22,6 +22,7 @@ class ModeFragment: BaseFragment<FragmentModeBinding>(R.layout.fragment_mode) {
         super.onViewCreated(view, savedInstanceState)
 
         initObserverType()
+        parentViewModel.speakAnnounce()
 
         binding.btnToHear.setOnClickListener {
             parentViewModel.buttonClicked()
