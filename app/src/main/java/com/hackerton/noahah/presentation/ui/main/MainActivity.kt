@@ -2,6 +2,7 @@ package com.hackerton.noahah.presentation.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import androidx.activity.result.contract.ActivityResultContracts
 import android.os.Handler
 import android.os.Looper
 import android.speech.RecognitionListener
@@ -16,12 +17,14 @@ import com.hackerton.noahah.presentation.base.BaseActivity
 import com.hackerton.noahah.presentation.ui.service.ServiceActivity
 import java.util.Locale
 
-class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate), TextToSpeech.OnInitListener {
+
+class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::inflate) , TextToSpeech.OnInitListener {
     private lateinit var tts: TextToSpeech
     private var isTTsReady = false
 
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var recognizerIntent: Intent
+
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -33,9 +36,21 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         initializeSpeechRecognizer()
 
         binding.btnUploadPdf.setOnClickListener {
-            startActivity(Intent(this,ServiceActivity::class.java))
+            val intent = Intent(Intent.ACTION_GET_CONTENT)
+            intent.type = "application/pdf"
+            requestPDF.launch(intent)
         }
     }
+
+    private val requestPDF =
+        registerForActivityResult(ActivityResultContracts.StartActivityForResult()) {
+            it.data?.data?.let { uri->
+                val intent = Intent(this, ServiceActivity::class.java)
+                    .putExtra("pdfUri", uri.toString())
+                startActivity(intent)
+            }
+        }
+
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
