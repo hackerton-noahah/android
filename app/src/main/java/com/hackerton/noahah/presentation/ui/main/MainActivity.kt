@@ -9,12 +9,14 @@ import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
 import android.speech.tts.TextToSpeech
+import android.util.Log
 import android.widget.Toast
 import com.hackerton.noahah.data.model.SpeechErrorMessage
 import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivityMainBinding
 import com.hackerton.noahah.presentation.base.BaseActivity
 import com.hackerton.noahah.presentation.ui.service.ServiceActivity
+import com.hackerton.noahah.presentation.util.Constants.TAG
 import java.util.Locale
 
 
@@ -24,7 +26,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
     private lateinit var speechRecognizer: SpeechRecognizer
     private lateinit var recognizerIntent: Intent
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -50,7 +51,6 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
                 startActivity(intent)
             }
         }
-
 
     override fun onInit(status: Int) {
         if (status == TextToSpeech.SUCCESS) {
@@ -105,6 +105,7 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
 
     private fun processResults(command: String) {
         // 임의의 문자열 포함 여부 확인
+        Log.d(TAG,command)
         if (command.contains("노아", ignoreCase = true)) {
             goToNextActivity()
         } else {
