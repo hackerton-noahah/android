@@ -114,10 +114,10 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
 
     private val listener: RecognitionListener = object : RecognitionListener {
         override fun onReadyForSpeech(params: Bundle) {
+            showCustomToast("음성 인식 시작")
         }
 
         override fun onBeginningOfSpeech() {
-            showCustomToast("음성 인식 시작")
         }
 
         override fun onRmsChanged(rmsdB: Float) {

@@ -69,6 +69,7 @@
             android:textColor="@color/white"
             android:textSize="28sp"
             android:textStyle="bold"
+            android:text="강의 pdf.pdf"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/layout_logo"
@@ -80,7 +81,7 @@
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
             android:layout_marginTop="12dp"
-            android:text="페이지 1/12"
+            android:text="페이지 1/2"
             android:textColor="@color/white"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/tv_pdf_name" />
