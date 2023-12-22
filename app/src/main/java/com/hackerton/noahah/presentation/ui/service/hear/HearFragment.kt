@@ -40,11 +40,7 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                         "⠛⠢⠃: ⠢ ⠛⠗⠛⠑⠃⠑⠛⠡⠅ ⠥⠂⠡ Java ⠛⠗⠉⠛⠡⠅ ⠉⠛⠒⠥⠡ ⠛⠥⠂⠡⠅ ⠥⠂⠡ ⠛⠅⠛⠅⠑⠃⠑⠛⠡⠅. ⠂⠂⠢⠃, ⠒⠂⠥⠂⠡ ⠥⠂⠡⠛⠅, ⠉⠛⠒⠂⠡, ⠡⠛⠡⠒⠡⠅⠉⠅, ⠛⠂⠛⠅⠉⠅ ⠒⠡⠉ ⠂⠡⠉⠡⠅⠅⠛⠅ ⠛⠗⠉⠛⠡⠅⠅⠅⠛⠅ ⠒⠂ ⠒⠂⠡⠅⠅⠉.\n" +
                         "\n" +
                         "⠛⠗⠡ ⠏⠈⠥: \"⠡⠂⠗⠉⠛⠅⠡⠅⠥ ⠒⠂⠂\"\n" +
-                        "⠛⠢⠃: ⠂⠗⠂⠡, ⠛⠒⠥⠥, ⠥⠥⠉, ⠏⠥⠒, ⠥⠗⠒, ⠛⠗⠂⠛⠉ ⠒⠡⠉ ⠒⠂⠅⠂⠥⠅⠅⠅ ⠡⠂⠗⠉⠛⠅⠡⠅⠥ ⠒⠂⠂ ⠛⠂⠛⠅⠉, ⠛⠅ ⠡⠂⠗⠉⠛⠅⠡⠅⠥⠅ ⠥⠒⠡⠅⠛⠅ ⠛⠅ ⠥⠂⠉⠉ ⠥⠡⠅, ⠡⠂⠅⠒⠂⠉⠅⠅ ⠛⠒ ⠛⠡⠛⠅⠂⠅⠅.\n" +
-                        "\n" +
-                        "⠛⠗⠡ ⠏⠈⠥: \"⠂⠛⠉⠛⠗⠒⠉ ⠒⠈⠗⠉\"\n" +
-                        "⠛⠢⠃: ⠡⠛⠅⠉⠛⠛, ⠥⠂⠉⠉, ⠛⠗⠂⠛⠉ ⠂⠛⠉⠛⠗⠒⠉ ⠒⠡⠉ ⠒⠂⠅⠂⠥⠅⠅ ⠂⠛⠉⠛⠗⠒⠉ ⠛⠂⠛⠅⠉, ⠛⠅ ⠂⠛⠉⠛⠗⠒⠉⠅ ⠡⠂⠏⠒⠉ ⠛⠗⠛⠛⠛⠡⠅ ⠛⠅ ⠥⠛⠥⠅ ⠛⠡⠛⠅⠂⠉⠅⠅ ⠛⠂ ⠛⠅⠂⠛⠉⠥."
-
+                        "⠛⠢⠃: ⠂⠗⠂⠡, ⠛⠒⠥⠥, ⠥⠥⠉, ⠏⠥⠒, ⠥⠗⠒, ⠛⠗⠂⠛⠉ ⠒⠡⠉ ⠒⠂⠅⠂⠥⠅⠅⠅ ⠡⠂⠗⠉⠛⠅⠡⠅⠥ ⠒⠂⠂ ⠛⠂⠛⠅⠉, ⠛⠅ ⠡⠂⠗⠉⠛⠅⠡⠅⠥⠅ ⠥⠒⠡⠅⠛⠅ ⠛⠅ ⠥⠂⠉⠉ ⠥⠡⠅, ⠡⠂⠅⠒⠂⠉⠅⠅ ⠛⠒ ⠛⠡⠛⠅⠂⠅⠅."
                 textToSpeechManager = TextToSpeechManager(
                     requireContext(),
                     SpeechMessage.COMPLETE_BRAILLE.message,
@@ -58,7 +54,7 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                         "개념을 다룹니다. 강의명: \"자료구조 이해\""
                 textToSpeechManager = TextToSpeechManager(
                     requireContext(),
-                    SpeechMessage.COMPLETE_VOICE.message,
+                    "1페이지입니다. " + SpeechMessage.COMPLETE_VOICE.message,
                     ::startVoice
                 )
             }
@@ -81,16 +77,11 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
         }
 
 
-        var idx: Int = 1
-        textToSpeechManager = TextToSpeechManager(
-            requireContext(),
-            textList.get(0),
-            ::emptyFun
-        )
+        var idx: Int = 0
         binding.apply {
             btnPrevious.setOnClickListener {
                 when(idx) {
-                    1 -> {
+                    0 -> {
                         textToSpeechManager = TextToSpeechManager(
                             requireContext(),
                             SpeechErrorMessage.IS_FIRST_PAGE.message,
@@ -98,14 +89,14 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                         )
                     }
                     else -> {
-                        tvResult.text = textList.get(idx - 1)
-                        idx++
+                        idx--
+                        tvResult.text = textList.get(idx)
                     }
                 }
             }
             btnNext.setOnClickListener {
                 when(idx) {
-                    textList.size -> {
+                    textList.size - 1 -> {
                         textToSpeechManager = TextToSpeechManager(
                             requireContext(),
                             SpeechErrorMessage.IS_LAST_PAGE.message,
@@ -113,8 +104,8 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                         )
                     }
                     else -> {
-                        tvResult.text = textList.get(idx - 1)
-                        idx--
+                        idx++
+                        tvResult.text = textList.get(idx)
                     }
                 }
             }
@@ -131,7 +122,7 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                     "작성하며 객체지향적 사고 방식을 훈련합니다. 강의명: \"데이터베이스 기초\"")
         }
 
-        var idx: Int = 1
+        var idx: Int = 0
         textToSpeechManager = TextToSpeechManager(
             requireContext(),
             binding.tvResult.text.toString(),
@@ -140,7 +131,7 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
         binding.apply {
             btnPrevious.setOnClickListener {
                 when (idx) {
-                    1 -> {
+                    0 -> {
                         textToSpeechManager = TextToSpeechManager(
                             requireContext(),
                             SpeechErrorMessage.IS_FIRST_PAGE.message,
@@ -149,18 +140,20 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                     }
 
                     else -> {
-                        idx++
+                        idx--
                         textToSpeechManager = TextToSpeechManager(
-                            requireContext(), "${idx - 1}페이지 입니다. " +
-                                    textList.get(idx - 1),
+                            requireContext(), "${idx + 1}페이지 입니다. " +
+                                    textList.get(idx),
                             ::emptyFun
                         )
+                        tvResult.text = textList.get(idx)
+
                     }
                 }
             }
             btnNext.setOnClickListener {
                 when (idx) {
-                    textList.size -> {
+                    textList.size - 1 -> {
                         textToSpeechManager = TextToSpeechManager(
                             requireContext(),
                             SpeechErrorMessage.IS_LAST_PAGE.message,
@@ -169,12 +162,13 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                     }
 
                     else -> {
-                        idx--
+                        idx++
                         textToSpeechManager = TextToSpeechManager(
-                            requireContext(), "${idx - 1}페이지 입니다. " +
-                                    textList.get(idx - 1),
+                            requireContext(), "${idx + 1}페이지 입니다. " +
+                                    textList.get(idx),
                             ::emptyFun
                         )
+                        tvResult.text = textList.get(idx)
                     }
                 }
             }
