@@ -2,15 +2,12 @@ package com.hackerton.noahah.presentation.ui.service
 
 import android.Manifest
 import android.content.Intent
-import android.os.Build
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.speech.tts.TextToSpeech
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.viewModels
@@ -20,15 +17,18 @@ import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivityServiceBinding
 import com.hackerton.noahah.presentation.base.BaseActivity
 import com.hackerton.noahah.presentation.ui.toMultiPart
+import com.hackerton.noahah.presentation.util.Constants.BRAILLE
+import com.hackerton.noahah.presentation.util.Constants.HEAR
+import com.hackerton.noahah.presentation.util.Constants.TAG
+import com.hackerton.noahah.presentation.util.TextToSpeechManager
 import dagger.hilt.android.AndroidEntryPoint
-import java.util.Locale
 
 @AndroidEntryPoint
-class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBinding::inflate), TextToSpeech.OnInitListener {
+class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBinding::inflate) {
 
     private val viewModel: ServiceViewModel by viewModels()
-    private lateinit var tts: TextToSpeech
-    private var isTTsReady = false
+    private lateinit var textToSpeechManager: TextToSpeechManager
+
     val PERMISSION = 1
 
     private lateinit var speechRecognizer: SpeechRecognizer
@@ -36,22 +36,9 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        tts = TextToSpeech(this, this)
+        textToSpeechManager = TextToSpeechManager(this, SpeechMessage.MODE_INIT_MENT.message, ::startObserverVoice)
 
-        // 안드로이드 6.0버전 이상인지 체크해서 퍼미션 체크
-        if (Build.VERSION.SDK_INT >= 23) {
-            ActivityCompat.requestPermissions(
-                this, arrayOf<String>(
-                    Manifest.permission.INTERNET,
-                    Manifest.permission.RECORD_AUDIO
-                ), PERMISSION
-            )
-        }
-
-        // RecognizerIntent 생성
-        intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,getPackageName()); // 여분의 키
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR"); // 언어 설정
+        recordSetting()
 
         if(intent.hasExtra("pdfUri")){
             intent.getStringExtra("pdfUri")?.let{ pdfUri ->
@@ -61,42 +48,27 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
         }
     }
 
-    override fun onInit(status: Int) {
-        if (status == TextToSpeech.SUCCESS) {
-            isTTsReady = true
-            tts.language = Locale.KOREAN
+    private fun recordSetting(){
+        // 안드로이드 6.0버전 이상인지 체크해서 퍼미션 체크
+        ActivityCompat.requestPermissions(
+            this, arrayOf(
+                Manifest.permission.INTERNET,
+                Manifest.permission.RECORD_AUDIO
+            ), PERMISSION
+        )
 
-            // TTS 준비되면 음성 출력 시작
-            speakOut(SpeechMessage.MODE_INIT_MENT.message)
-        }
+        // RecognizerIntent 생성
+        intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+        intent.putExtra(RecognizerIntent.EXTRA_CALLING_PACKAGE,getPackageName()); // 여분의 키
+        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,"ko-KR"); // 언어 설정
     }
 
-    private fun speakOut(text: String) {
-        if (isTTsReady) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null, "utteranceId_1")
-                tts.setOnUtteranceProgressListener(object : UtteranceProgressListener() {
-                    override fun onStart(utteranceId: String?) {
-                    }
-
-                    override fun onDone(utteranceId: String?) {
-
-                        Handler(Looper.getMainLooper()).post {
-                            // 음성 재생이 끝나면 음성 인식 시작
-                            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this@ServiceActivity); // 새 SpeechRecognizer 를 만드는 팩토리 메서드
-                            speechRecognizer.setRecognitionListener(listener); // 리스너 설정
-                            speechRecognizer.startListening(intent); // 듣기 시작
-                        }
-                    }
-
-                    override fun onError(utteranceId: String?) {
-                    }
-                })
-            } else {
-                @Suppress("DEPRECATION")
-                tts.speak(text, TextToSpeech.QUEUE_FLUSH, null)
-                // 구버전이 경우 방식이 다름
-            }
+    private fun startObserverVoice(){
+        Handler(Looper.getMainLooper()).post {
+            // 음성 재생이 끝나면 음성 인식 시작
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this@ServiceActivity); // 새 SpeechRecognizer 를 만드는 팩토리 메서드
+            speechRecognizer.setRecognitionListener(listener); // 리스너 설정
+            speechRecognizer.startListening(intent); // 듣기 시작
         }
     }
 
@@ -154,7 +126,15 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
             for (i in matches!!.indices) {
                 userInput += matches[i]
             }
-            Log.d("준석", "${userInput}")
+
+            Log.d(TAG, userInput)
+
+            if(userInput.contains("음성")){
+                viewModel.setType(HEAR)
+            } else if(userInput.contains("점자")){
+                viewModel.setType(BRAILLE)
+            }
+
         }
 
         override fun onPartialResults(partialResults: Bundle) {
@@ -167,10 +147,7 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
     }
 
     override fun onDestroy() {
-        if (::tts.isInitialized) {
-            tts.stop()
-            tts.shutdown()
-        }
+        textToSpeechManager.destroy()
         super.onDestroy()
     }
 }
