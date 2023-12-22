@@ -85,7 +85,7 @@
             android:layout_height="0dp"
             android:layout_marginTop="50dp"
             android:layout_marginEnd="20dp"
-            android:background="@drawable/rect_yellowfill_greystroke_customradius"
+            android:background="@drawable/rect_yellowfill_greystroke_custom_radius"
             android:text="점자모드"
             android:textSize="24sp"
             android:textStyle="bold"
