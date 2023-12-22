@@ -13,6 +13,7 @@ import android.widget.Toast
 import androidx.activity.viewModels
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
+import com.hackerton.noahah.data.model.SpeechErrorMessage
 import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivityServiceBinding
 import com.hackerton.noahah.presentation.base.BaseActivity
@@ -72,6 +73,16 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
         }
     }
 
+    private fun restartObserverVoice() {
+        Handler(Looper.getMainLooper()).post {
+            speechRecognizer.destroy()
+            // 음성 재생이 끝나면 음성 인식 시작
+            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this@ServiceActivity); // 새 SpeechRecognizer 를 만드는 팩토리 메서드
+            speechRecognizer.setRecognitionListener(listener); // 리스너 설정
+            speechRecognizer.startListening(intent); // 듣기 시작
+        }
+    }
+
     private val listener: RecognitionListener = object : RecognitionListener {
         override fun onReadyForSpeech(params: Bundle) {
             // 말하기 시작할 준비가되면 호출
@@ -104,18 +115,24 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
             // 네트워크 또는 인식 오류가 발생했을 때 호출
             val message: String
             message = when (error) {
-                SpeechRecognizer.ERROR_AUDIO -> "오디오 에러"
-                SpeechRecognizer.ERROR_CLIENT -> "클라이언트 에러"
-                SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "퍼미션 없음"
-                SpeechRecognizer.ERROR_NETWORK -> "네트워크 에러"
-                SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "네트웍 타임아웃"
-                SpeechRecognizer.ERROR_NO_MATCH -> "찾을 수 없음"
-                SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "RECOGNIZER 가 바쁨"
-                SpeechRecognizer.ERROR_SERVER -> "서버가 이상함"
-                SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "말하는 시간초과"
-                else -> "알 수 없는 오류임"
+                SpeechRecognizer.ERROR_AUDIO -> "오디오 에러입니다."
+                SpeechRecognizer.ERROR_CLIENT -> "클라이언트 문제입니다."
+                SpeechRecognizer.ERROR_INSUFFICIENT_PERMISSIONS -> "권한이 없습니다"
+                SpeechRecognizer.ERROR_NETWORK -> "네트워크 에러입니다."
+                SpeechRecognizer.ERROR_NETWORK_TIMEOUT -> "네트워크 시간 초과입니다."
+                SpeechRecognizer.ERROR_NO_MATCH -> "음성이 인식되지 않았습니다. 다시 말씀해주세요"
+                SpeechRecognizer.ERROR_RECOGNIZER_BUSY -> "잠시 후에 다시 시도해주세요."
+                SpeechRecognizer.ERROR_SERVER -> "서버 문제입니다."
+                SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "말씀하신 문장이 너무 깁니다.. 다시 말씀해주세요"
+                else -> "알 수 없는 오류입니다."
             }
-            Toast.makeText(applicationContext, "에러 발생 : $message", Toast.LENGTH_SHORT).show()
+            when(message) {
+                "음성이 인식되지 않았습니다. 다시 말씀해주세요",
+                "잠시 후에 다시 시도해주세요.",
+                "말씀하신 문장이 너무 깁니다.. 다시 말씀해주세요" -> {
+                    textToSpeechManager = TextToSpeechManager(this@ServiceActivity, message, ::restartObserverVoice)
+                }
+            }
         }
 
         override fun onResults(results: Bundle) {
@@ -130,9 +147,20 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
             Log.d(TAG, userInput)
 
             if(userInput.contains("음성")){
+                Handler(Looper.getMainLooper()).post {
+                    speechRecognizer.destroy()
+                    textToSpeechManager.destroy()
+                }
                 viewModel.setType(HEAR)
             } else if(userInput.contains("점자")){
+                Handler(Looper.getMainLooper()).post {
+                    speechRecognizer.destroy()
+                    textToSpeechManager.destroy()
+                }
                 viewModel.setType(BRAILLE)
+            } else {
+                textToSpeechManager = TextToSpeechManager(this@ServiceActivity,
+                    SpeechErrorMessage.NOT_EXIST_MODE.message, ::restartObserverVoice)
             }
 
         }
@@ -147,7 +175,6 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
     }
 
     override fun onDestroy() {
-        textToSpeechManager.destroy()
         super.onDestroy()
     }
 }
