@@ -134,6 +134,7 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
 
     private fun startVoice() {
         // TODO 받아온
+
     }
 
     private fun emptyFun() {
