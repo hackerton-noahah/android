@@ -17,7 +17,6 @@ data class HearUiState(
     val showText: String = "",
     val page: Int = 0,
     val hasNext: Boolean = true,
-    val modeNum: Int = 0
 )
 
 @HiltViewModel
@@ -43,9 +42,6 @@ class HearViewModel @Inject constructor(
                     state.copy(
                         mode = " : 점자모드"
                     )
-                    state.copy(
-                        modeNum = 1
-                    )
                 }
                 getBraille()
             }
@@ -54,9 +50,6 @@ class HearViewModel @Inject constructor(
                 _uiState.update { state ->
                     state.copy(
                         mode = " : 음성모드"
-                    )
-                    state.copy(
-                        modeNum = 2
                     )
                 }
                 getText()

@@ -32,9 +32,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             Handler(Looper.getMainLooper()).post {
                 textToSpeechManager.destroy()
             }
-            val intent = Intent(Intent.ACTION_GET_CONTENT)
-            intent.type = "application/pdf"
-            requestPDF.launch(intent)
+
+//            val intent = Intent(Intent.ACTION_GET_CONTENT)
+//            intent.type = "application/pdf"
+//            requestPDF.launch(intent)
+
+
+            val intent = Intent(this@MainActivity, ServiceActivity::class.java)
+                .putExtra("pdfId", 0)
+            startActivity(intent)
         }
     }
 
