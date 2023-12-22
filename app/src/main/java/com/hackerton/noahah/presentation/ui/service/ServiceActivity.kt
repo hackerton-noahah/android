@@ -57,10 +57,10 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
             viewModel.events.collect {
                 when (it) {
                     is ServiceEvents.ModeButtonClicked -> {
-                        Handler(Looper.getMainLooper()).post {
-                            textToSpeechManager.destroy()
-                            speechRecognizer.destroy()
-                        }
+//                        Handler(Looper.getMainLooper()).post {
+//                            textToSpeechManager.destroy()
+//                            speechRecognizer.destroy()
+//                        }
                     }
 
                     is ServiceEvents.SpeakAnnounce -> {
