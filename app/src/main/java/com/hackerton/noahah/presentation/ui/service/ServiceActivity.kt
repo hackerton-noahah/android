@@ -3,10 +3,10 @@ package com.hackerton.noahah.presentation.ui.service
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.speech.tts.TextToSpeech
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
-import android.speech.tts.TextToSpeech
 import android.speech.tts.UtteranceProgressListener
 import android.util.Log
 import android.widget.Toast
@@ -17,9 +17,10 @@ import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivityServiceBinding
 import com.hackerton.noahah.presentation.base.BaseActivity
 import com.hackerton.noahah.presentation.ui.toMultiPart
+import dagger.hilt.android.AndroidEntryPoint
 import java.util.Locale
 
-
+@AndroidEntryPoint
 class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBinding::inflate), TextToSpeech.OnInitListener {
 
     private val viewModel: ServiceViewModel by viewModels()
@@ -52,7 +53,7 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
         if(intent.hasExtra("pdfUri")){
             intent.getStringExtra("pdfUri")?.let{ pdfUri ->
                 val pdfMultiPart = pdfUri.toUri().toMultiPart(this)
-                viewModel.setMultiPart(pdfMultiPart)
+                viewModel.setPdfMultiPart(pdfMultiPart)
             }
         }
     }

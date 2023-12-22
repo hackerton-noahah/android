@@ -5,6 +5,10 @@
 
     <data>
 
+        <variable
+            name="vm"
+            type="com.hackerton.noahah.presentation.ui.service.hear.HearViewModel" />
+
     </data>
 
     <androidx.constraintlayout.widget.ConstraintLayout
@@ -34,6 +38,18 @@
                 app:layout_constraintStart_toEndOf="@id/iv_microphone"
                 app:layout_constraintTop_toTopOf="@id/iv_microphone" />
 
+            <TextView
+                android:id="@+id/tv_mode"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@{vm.uiState.mode}"
+                android:textColor="@color/white"
+                android:textSize="14sp"
+                android:textStyle="bold"
+                app:layout_constraintBottom_toBottomOf="@id/iv_microphone"
+                app:layout_constraintStart_toEndOf="@id/tv_app_title"
+                app:layout_constraintTop_toTopOf="@id/iv_microphone"
+                tools:text=" : 점자모드" />
 
             <ImageView
                 android:id="@+id/iv_microphone"

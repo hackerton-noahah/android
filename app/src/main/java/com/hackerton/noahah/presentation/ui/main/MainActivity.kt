@@ -2,8 +2,11 @@ package com.hackerton.noahah.presentation.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.speech.SpeechRecognizer
 import androidx.activity.result.contract.ActivityResultContracts
 import android.speech.tts.TextToSpeech
+import android.speech.tts.UtteranceProgressListener
+import androidx.activity.result.contract.ActivityResultContracts
 import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivityMainBinding
 import com.hackerton.noahah.presentation.base.BaseActivity
