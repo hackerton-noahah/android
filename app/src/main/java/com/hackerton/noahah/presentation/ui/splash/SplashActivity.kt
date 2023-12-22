@@ -2,8 +2,6 @@ package com.hackerton.noahah.presentation.ui.splash
 
 import android.content.Intent
 import android.os.Bundle
-import android.speech.tts.TextToSpeech
-import com.hackerton.noahah.app.App
 import com.hackerton.noahah.data.model.SpeechMessage
 import com.hackerton.noahah.databinding.ActivitySplashBinding
 import com.hackerton.noahah.presentation.base.BaseActivity

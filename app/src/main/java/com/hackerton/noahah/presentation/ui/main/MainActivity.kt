@@ -2,6 +2,9 @@ package com.hackerton.noahah.presentation.ui.main
 
 import android.content.Intent
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
+import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.activity.viewModels
 import com.hackerton.noahah.data.model.SpeechMessage
@@ -26,6 +29,9 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
         textToSpeechManager = TextToSpeechManager(this, SpeechMessage.MAIN_INIT_MENT.message) {}
 
         binding.btnUploadPdf.setOnClickListener {
+            Handler(Looper.getMainLooper()).post {
+                textToSpeechManager.destroy()
+            }
             val intent = Intent(Intent.ACTION_GET_CONTENT)
             intent.type = "application/pdf"
             requestPDF.launch(intent)
@@ -54,8 +60,15 @@ class MainActivity : BaseActivity<ActivityMainBinding>(ActivityMainBinding::infl
             }
         }
 
+    override fun onRestart() {
+        textToSpeechManager = TextToSpeechManager(this, SpeechMessage.MAIN_INIT_MENT.message){}
+        super.onRestart()
+    }
+
     override fun onDestroy() {
-        textToSpeechManager.destroy()
+        Handler(Looper.getMainLooper()).post {
+            textToSpeechManager.destroy()
+        }
         super.onDestroy()
     }
 }
