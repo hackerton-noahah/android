@@ -134,13 +134,13 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
                 SpeechRecognizer.ERROR_SPEECH_TIMEOUT -> "말씀하신 문장이 너무 깁니다.. 다시 말씀해주세요"
                 else -> "알 수 없는 오류입니다."
             }
-            when(message) {
-                "음성이 인식되지 않았습니다. 다시 말씀해주세요",
-                "잠시 후에 다시 시도해주세요.",
-                "말씀하신 문장이 너무 깁니다.. 다시 말씀해주세요" -> {
-                    textToSpeechManager = TextToSpeechManager(this@ServiceActivity, message, ::restartObserverVoice)
-                }
-            }
+//            when(message) {
+//                "음성이 인식되지 않았습니다. 다시 말씀해주세요",
+//                "잠시 후에 다시 시도해주세요.",
+//                "말씀하신 문장이 너무 깁니다.. 다시 말씀해주세요" -> {
+//                    textToSpeechManager = TextToSpeechManager(this@ServiceActivity, message, ::restartObserverVoice)
+//                }
+//            }
         }
 
         override fun onResults(results: Bundle) {
@@ -166,10 +166,11 @@ class ServiceActivity : BaseActivity<ActivityServiceBinding>(ActivityServiceBind
                     textToSpeechManager.destroy()
                 }
                 viewModel.setType(BRAILLE)
-            } else {
-                textToSpeechManager = TextToSpeechManager(this@ServiceActivity,
-                    SpeechErrorMessage.NOT_EXIST_MODE.message, ::restartObserverVoice)
             }
+//            else {
+//                textToSpeechManager = TextToSpeechManager(this@ServiceActivity,
+//                    SpeechErrorMessage.NOT_EXIST_MODE.message, ::restartObserverVoice)
+//            }
         }
 
         override fun onPartialResults(partialResults: Bundle) {

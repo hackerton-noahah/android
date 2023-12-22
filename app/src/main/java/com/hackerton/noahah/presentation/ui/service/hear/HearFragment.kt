@@ -6,6 +6,7 @@ import android.content.Intent
 import android.os.Bundle
 import android.speech.RecognizerIntent
 import android.speech.SpeechRecognizer
+import android.util.Log
 import android.view.View
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
@@ -85,6 +86,8 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                     "내용: 관계형 데이터베이스의 원리를 배우고, SQL을 사용해 데이터를 \n" +
                     "조회, 삽입, 수정, 삭제하는 방법을 배웁니다.")
         }
+
+
         var idx: Int = 1
         textToSpeechManager = TextToSpeechManager(
             requireContext(),
@@ -101,7 +104,7 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
                             ::emptyFun
                         )
                     }
-                    textList.size -> {
+                    else -> {
                         textToSpeechManager = TextToSpeechManager(
                             requireContext(), "${idx - 1}페이지 입니다. " +
                             textList.get(textList.size - 1),
@@ -112,17 +115,17 @@ class HearFragment : BaseFragment<FragmentHearBinding>(R.layout.fragment_hear) {
             }
             btnNext.setOnClickListener {
                 when(idx) {
-                    1 -> {
-                        textToSpeechManager = TextToSpeechManager(
-                            requireContext(), "${idx - 1}페이지 입니다. " +
-                                    textList.get(textList.size - 1),
-                            ::emptyFun
-                        )
-                    }
                     textList.size -> {
                         textToSpeechManager = TextToSpeechManager(
                             requireContext(),
                             SpeechErrorMessage.IS_LAST_PAGE.message,
+                            ::emptyFun
+                        )
+                    }
+                    else -> {
+                        textToSpeechManager = TextToSpeechManager(
+                            requireContext(), "${idx - 1}페이지 입니다. " +
+                                    textList.get(textList.size - 1),
                             ::emptyFun
                         )
                     }
