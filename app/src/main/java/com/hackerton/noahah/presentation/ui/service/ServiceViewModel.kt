@@ -11,6 +11,7 @@ import javax.inject.Inject
 
 sealed class ServiceEvents{
     data object ModeButtonClicked: ServiceEvents()
+    data object SpeakAnnounce: ServiceEvents()
 }
 
 @HiltViewModel
@@ -38,6 +39,12 @@ class ServiceViewModel @Inject constructor() : ViewModel() {
     fun setType(data : String){
         viewModelScope.launch {
             type.emit(data)
+        }
+    }
+
+    fun speakAnnounce(){
+        viewModelScope.launch {
+            _events.emit(ServiceEvents.SpeakAnnounce)
         }
     }
 
