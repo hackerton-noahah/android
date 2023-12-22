@@ -1,8 +1,11 @@
 package com.hackerton.noahah.presentation.ui.service
 
+import android.Manifest
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.speech.tts.TextToSpeech
 import android.speech.RecognitionListener
 import android.speech.RecognizerIntent
@@ -35,15 +38,15 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
 
         tts = TextToSpeech(this, this)
 
-//        // 안드로이드 6.0버전 이상인지 체크해서 퍼미션 체크
-//        if (Build.VERSION.SDK_INT >= 23) {
-//            ActivityCompat.requestPermissions(
-//                this, arrayOf<String>(
-//                    Manifest.permission.INTERNET,
-//                    Manifest.permission.RECORD_AUDIO
-//                ), PERMISSION
-//            )
-//        }
+        // 안드로이드 6.0버전 이상인지 체크해서 퍼미션 체크
+        if (Build.VERSION.SDK_INT >= 23) {
+            ActivityCompat.requestPermissions(
+                this, arrayOf<String>(
+                    Manifest.permission.INTERNET,
+                    Manifest.permission.RECORD_AUDIO
+                ), PERMISSION
+            )
+        }
 
         // RecognizerIntent 생성
         intent = Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
@@ -77,10 +80,13 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
                     }
 
                     override fun onDone(utteranceId: String?) {
-                        // 음성 재생이 끝나면 음성 인식 시작
-                        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this@ServiceActivity); // 새 SpeechRecognizer 를 만드는 팩토리 메서드
-                        speechRecognizer.setRecognitionListener(listener); // 리스너 설정
-                        speechRecognizer.startListening(intent); // 듣기 시작
+
+                        Handler(Looper.getMainLooper()).post {
+                            // 음성 재생이 끝나면 음성 인식 시작
+                            speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this@ServiceActivity); // 새 SpeechRecognizer 를 만드는 팩토리 메서드
+                            speechRecognizer.setRecognitionListener(listener); // 리스너 설정
+                            speechRecognizer.startListening(intent); // 듣기 시작
+                        }
                     }
 
                     override fun onError(utteranceId: String?) {
@@ -102,18 +108,24 @@ class ServiceActivity: BaseActivity<ActivityServiceBinding>(ActivityServiceBindi
 
         override fun onBeginningOfSpeech() {
             // 말하기 시작했을 때 호출
+            Toast.makeText(applicationContext, "음성인식 시작", Toast.LENGTH_SHORT).show()
+
         }
 
         override fun onRmsChanged(rmsdB: Float) {
             // 입력받는 소리의 크기를 알려줌
+            Toast.makeText(applicationContext, "소리 크기", Toast.LENGTH_SHORT).show()
         }
 
         override fun onBufferReceived(buffer: ByteArray) {
             // 말을 시작하고 인식이 된 단어를 buffer에 담음
+            Toast.makeText(applicationContext, "단어 담기", Toast.LENGTH_SHORT).show()
+
         }
 
         override fun onEndOfSpeech() {
             // 말하기를 중지하면 호출
+            Toast.makeText(applicationContext, "말하기 중지", Toast.LENGTH_SHORT).show()
         }
 
         override fun onError(error: Int) {
